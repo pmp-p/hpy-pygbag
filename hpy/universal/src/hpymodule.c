@@ -557,6 +557,7 @@ int exec_module(PyObject* mod) {
     if (current_mod_spec == NULL)
         return -1;
 
+#if !defined(__EMSCRIPTEN__)
     PyObject *location = PyObject_GetAttrString(current_mod_spec, "origin");
     if (location == NULL)
         return -1;
@@ -572,6 +573,10 @@ int exec_module(PyObject* mod) {
                       HPyInit__trace(), spec_from_file_and_location, location);
     if (result != 0)
         return result;
+#else
+    (void)ctx;
+    (void)initialize_module;
+#endif
 
     for (int i=0; hpy_mode_names[i]; i++)
     {
